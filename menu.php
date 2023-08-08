@@ -7,7 +7,15 @@ class Menu{
         echo(PHP_EOL);
     }
 
-    public function pantallaBienvenida($nombreSistema){
+    //Función que muestra una línea en pantalla con el salto de línea
+    public function readln($texto) {
+        echo ($texto);
+        $rta = readline();
+        echo(PHP_EOL);
+        return $rta;
+   }   
+
+public function pantallaBienvenida($nombreSistema){
         self::writeln("**************************************");
         self::writeln("**                                 **");     
         self::writeln("**   Bienvenidos a ".$nombreSistema."      **");
@@ -38,10 +46,17 @@ class Menu{
         self::writeln("Menu Pagos");
         self::writeln("");
     }
+    
 
+    //Se eligió 2, administrar participantes (ABM)
     public function menuABMParticipantes(){
         self::writeln("Menu ABM Participantes");
-        self::writeln("");
+        self::writeln("0. Volver al menu anterior");
+        self::writeln("1. Alta participante");
+        self::writeln("2. Baja participante");
+        self::writeln("3. Modificar participante");
+        self::writeln("4. Mostrar participantes");
+
     }
 
     public function menuAdmin(){
