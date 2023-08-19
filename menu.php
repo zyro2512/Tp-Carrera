@@ -14,8 +14,18 @@ class Menu{
         echo(PHP_EOL);
         return $rta;
    }   
+   
+   //Limpia la pantalla dependiendo del sistema operativo que estemos usando 
+   public function cls(){
+      if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+    // Estás en Windows
+    		system("cls");
+		} else {
+    			system("clear");
+      }
+   }
 
-public function pantallaBienvenida($nombreSistema){
+	public function pantallaBienvenida($nombreSistema){
         self::writeln("**************************************");
         self::writeln("**                                 **");     
         self::writeln("**   Bienvenidos a ".$nombreSistema."      **");
@@ -29,53 +39,58 @@ public function pantallaBienvenida($nombreSistema){
         self::writeln("");
     }
 
-    public function menuElegirUsuario(){
+    public function elegirUsuario(){
+		  self::cls();        
         self::writeln("Elige un tipo de usuario: ");
         self::writeln("0. Salir");
         self::writeln("1. Paricipante");
         self::writeln("2. Administrador");
         self::writeln("");
+        return self::readln("opción: ");   
     }
 
-    public function menuABMCarreras(){
+    public function ABMCarreras(){
         self::writeln("Menu ABM Carreras");
         self::writeln("");
     }
 
-    public function menuPagos(){
+    public function Pagos(){
         self::writeln("Menu Pagos");
         self::writeln("");
     }
     
 
     //Se eligió 2, administrar participantes (ABM)
-    public function menuABMParticipantes(){
+    public function ABMParticipantes(){          
         self::writeln("Menu ABM Participantes");
         self::writeln("0. Volver al menu anterior");
         self::writeln("1. Alta participante");
         self::writeln("2. Baja participante");
         self::writeln("3. Modificar participante");
         self::writeln("4. Mostrar participantes");
+        return self::readln("opción: ");  
 
     }
 
-    public function menuAdmin(){
+    public function admin(){
+		  self::cls();          
         self::writeln("Elija la operación a realizar: ");
         self::writeln("0. Volver al menu anterior");
         self::writeln("1. Administrar carreras");
         self::writeln("2. Administrar participantes");
         self::writeln("3. Administrar pagos");
-        self::writeln("");
+        return self::readln("opción: ");  
     }
        
-    public function menuParticipante(){
+    public function participante(){
+		  self::cls();       
         self::writeln("Elija la operación a realizar: ");
         self::writeln("0. Volver al menu anterior");
-        self::writeln("1. Registrarse en el sistema");
-        self::writeln("2. Administrar equipos");
-        self::writeln("3. Administrar pagos");
-        self::writeln("4. Administrar carreras");
-        self::writeln("");
+        self::writeln("1. Registrarme en el sistema");
+        self::writeln("2. Administrar mis equipos");
+        self::writeln("3. Administrar mis pagos");
+        self::writeln("4. Administrar mis carreras");
+        return self::readln("opción: ");  
     }
 }
 

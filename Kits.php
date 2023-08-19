@@ -1,8 +1,7 @@
 <?php
 
-require_once ('Carreas.php');
 
-class Kits extends Carrera {
+class Kits {
 
     private $chip;
     private $numero;

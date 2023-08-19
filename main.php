@@ -1,35 +1,54 @@
 <?php
  require_once('Menu.php');
-// require_once('atleta.php');
  require_once('atletaManager.php'); 
- require_once('Carreas.php');
+ require_once('carreraManager.php');
   
-    //Dar de alta un participante
+  //Dar de alta un participante
   function altaParticipante($menu,$atletaManager){
         $nombre = $menu->readln("Ingrese nombre y apellido: ");
         $email = $menu->readln("Ingrese mail: ");
-        $fechaNacimiento =  $menu->readln("Ingrese fecha de nacimiento, coon el formato dd/mm/yyyy: ");
-        $id = $atletaManager->getIds();
-        $atleta = new Atleta($id,$nombre,$email,$fechaNacimiento);
-        $atletaManager->agregaratleta($atleta);
-    }
+        $fechaNacimiento =  $menu->readln("Ingrese fecha de nacimiento, con el formato dd/mm/yyyy: ");
+        $atleta = new Atleta($atletaManager->getNuevoId(),$nombre,$email,$fechaNacimiento);
+        $atletaManager->agregar($atleta);
+  }
  
-    //Muestra todos los atletas
-  function mostrarParticipantes($menu,$atletaManager){
-        $atletas = $atletaManager->obteneratletas();
-        foreach ($atletas as $atleta) {
-            var_dump($atleta);
-            //    echo "ID: " . $atleta->getId() . ", Nombre: " . $atleta->getNombre() . ", Email: " . $atleta->getEmail() . ", Fecha nacimiento: " . $atleta->getFechaNacimiento->format('d/m/y');
-            echo(PHP_EOL);
+  //Dar de baja un participante
+  function bajaParticipante($menu,$atletaManager){
+        $id = $menu->readln("Ingrese Id de atleta a elimiar: ");
+        if($atletaManager->existeId($id)){
+        		$atletaManager->eliminarPorId($id);
+        	}else {
+        		$menu->writeln("El id ingresado no se encuentra entre nuestros atletas");
         }
-}
-       
-       
+  }
+         
+  //Modificar un participante
+  function modificaParticipante($menu,$atletaManager){
+        $id = $menu->readln("Ingrese Id de atleta a modificar: ");
+        if($atletaManager->existeId($id)){
+            $atletaModificado = $atletaManager->getPorId($id);         	   
+        	   $menu->writeln("A continuación ingrese los nuevos datos, enter para dejarlos sin modificar");
+        		$nombre = $menu->readln("Ingrese nombre y apellido: ");
+        		if ($nombre != ""){
+        			$atletaModificado->setNombre($nombre);
+        		}
+            $email = $menu->readln("Ingrese mail: ");
+        		if ($email != ""){
+        			$atletaModificado->setEmail($email);
+        		}
+            $fechaNacimiento =  $menu->readln("Ingrese fecha de nacimiento, con el formato dd/mm/yyyy: ");
+            if ($fechaNacimiento != ""){
+        			$atletaModificado->setFechaNacimiento($fechaNacimiento);
+        		}
+		      $atletaManager->modificar($atletaModificado);
+        	}else {
+        		$menu->writeln("El id ingresado no se encuentra entre nuestros atletas");
+        }
+  }
 
-
-    function menuABMparticipantes($menu, $atletaManager){
-        $menu->menuABMParticipantes();     //0 volver, 1 alta, 2 baja, 3 modificacion, 4 mostrar
-        $opcion = readline("opcion: ");
+  //Un administrador va a operar con participantes
+  function ABMparticipantes($menu, $atletaManager){
+        $opcion = $menu->ABMParticipantes();     //0 volver, 1 alta, 2 baja, 3 modificacion, 4 mostrar
         while ($opcion != 0){
             switch ($opcion) {
                 case '1': 
@@ -39,30 +58,29 @@
                         bajaParticipante($menu,$atletaManager);
                         break;
                 case '3':
-                        modificarParticipante($menu,$atletaManager);
+                        modificaParticipante($menu,$atletaManager);
                         break;
                 case '4':
-                        mostrarParticipantes($menu,$atletaManager);
+                        $atletaManager->mostrarAtletas();
                         break;
                 default:
                        $menu->writeln("Tipo de operación inválida");
                        break;
                 }
-                $menu->menuABMParticipantes();
-                $opcion = readline("opcion: ");
+                $opcion = $menu->ABMParticipantes();     //0 volver, 1 alta, 2 baja, 3 modificacion, 4 mostrar
         }
     }
 
-    function subMenuAdmin($menu, $atletaManager){
-    $menu->menuAdmin();     //0 volver, 1 carreras, 2 participantes, 3 pagos
-    $opcion = readline("opcion: ");
+//Se le presentan todas las opciones para operar a un Administrador
+  function operacionesAdmin($menu, $atletaManager){
+    $opcion = $menu->admin();     //0 volver, 1 carreras, 2 participantes, 3 pagos
     while ($opcion != 0){
         switch ($opcion) {
             case '1': 
-                    $menu->menuABMCarreras();
+                    $menu->ABMCarreras();
                     break;
             case '2':
-                    menuABMparticipantes($menu,$atletaManager);
+                    ABMparticipantes($menu,$atletaManager);
                     break;
             case '3':
                     $menu->menuPagos();
@@ -71,15 +89,16 @@
                    $menu->writeln("Tipo de operación inválida");
                    break;
             }
-            $menu->menuAdmin();  //0 salir, 1 participante, 2 administrador
+            $menu->admin();  //0 salir, 1 participante, 2 administrador
             $opcion = readline("opcion: ");
     }
 }
 
-function subMenuParticipante($menu, $atletaManager){
-    $menu->menuParticipante();     //0 volver, 1 carreras, 2 participantes, 3 pagos
-    $opcion = readline("opcion: ");
+//Se le presentan todas las opciones para operar a un participante
+function operacionesParticipante($menu, $atletaManager){
+	 $opcion = $menu->participante();     //0 volver, 1 carreras, 2 participantes, 3 pagos
     while ($opcion != 0){
+		  $menu->cls();        
         switch ($opcion) {
             case '1': 
                     $menu->menuABMCarreras();
@@ -94,35 +113,40 @@ function subMenuParticipante($menu, $atletaManager){
                    $menu->writeln("Tipo de operación inválida");
                    break;
             }
-            $menu->menuAdmin();  //0 salir, 1 participante, 2 administrador
-            $opcion = readline("opcion: ");
+            $opcion = $menu->participante();   //0 volver, 1 carreras, 2 participantes, 3 pagos
     }
 }
 
+//MAIN
+
 $menu = new Menu;
- $atletaManager = new AtletaManager();
+$menu->cls();
 $menu->pantallaBienvenida('Es-Tan-Dil');
-$menu->menuElegirUsuario();  //0 salir, 1 participante, 2 administrador
+
+$atletaManager = new AtletaManager();
+$atletaManager->cargaInicial();
+
+$carreraManager = new CarreraManager();
+$carreraManager->cargaInicial();
+
 // Leer el tipo de usuario seleccionado
-$opcionTipoUsuario = readline("opcion: ");
-//system('cls'); 
+$opcionTipoUsuario = $menu->elegirUsuario();  //0 salir, 1 participante, 2 administrador
+
 while ($opcionTipoUsuario != 0){
-      
-    switch ($opcionTipoUsuario) {
+    
+     switch ($opcionTipoUsuario) {
         case '1': 
-	        subMenuParticipante($menu,$atletaManager);
-                break;
+	        operacionesParticipante($menu,$atletaManager);
+           break;
         case '2':
-                subMenuAdmin($menu,$atletaManager);
-                break;
+           operacionesAdmin($menu,$atletaManager);
+           break;
         default:
-               $menu->writeln("Tipo de usuario inválido");
-               break;
+           $menu->writeln("Tipo de usuario inválido");
+           break;
         }
-        $menu->menuElegirUsuario();  //0 salir, 1 participante, 2 administrador
-        $opcionTipoUsuario = readline("opcion: ");
+        $opcionTipoUsuario = $menu->elegirUsuario();  //0 salir, 1 participante, 2 administrador;
 
     }
-        $menu->pantallaDespedida();
-
- 
+    $menu->pantallaDespedida();
+?>
